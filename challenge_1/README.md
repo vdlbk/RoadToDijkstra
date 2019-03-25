@@ -23,3 +23,6 @@ It's case sensitive
 #### Solution decided
 
 I've decided to try to use 2 cursors
+
+Complexity:    
+I guess it would be a `O(n log n)`

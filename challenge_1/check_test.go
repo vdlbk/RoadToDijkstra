@@ -19,10 +19,10 @@ func Test_LongestCommonSubsequence(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
-		ouput := LongestCommonSubsequence(testCase.input.s1, testCase.input.s2)
+		output := LongestCommonSubsequence(testCase.input.s1, testCase.input.s2)
 
-		if ouput != testCase.expectedOutput {
-			t.Errorf("Ouput was incorrect, LongestCommonSubsequence()= %v, want: %v.", ouput, testCase.expectedOutput)
+		if output != testCase.expectedOutput {
+			t.Errorf("Ouput was incorrect, LongestCommonSubsequence()= %v, want: %v.", output, testCase.expectedOutput)
 		}
 	}
 
