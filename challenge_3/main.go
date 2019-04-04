@@ -9,7 +9,7 @@ func Permute(nums []int) [][]int {
 	} else if len(nums) == 2 {
 		result = [][]int{nums, []int{nums[1], nums[0]}}
 	} else {
-		for i := range nums {
+		for i := range nums { // O(n)
 			x := nums[i]
 			startBuffer := nums[:i]
 			endBuffer := nums[i+1:]
@@ -20,8 +20,8 @@ func Permute(nums []int) [][]int {
 			copy(end, endBuffer)
 
 			y := append(start, end...)
-			m := Permute(y)
-			for j := range m {
+			m := Permute(y) // O(n-1!)
+			for j := range m { 
 				m[j] = append([]int{x}, m[j]...)
 			}
 			result = append(result, m...)

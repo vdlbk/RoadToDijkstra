@@ -69,4 +69,4 @@ Finally I decided to code just the first solution. The second looks great but it
 
 
 #### Complexity
-To be determined
+As the number of possible solution is `n!`, I guess the complexity for this one is `O(n!)`
