@@ -31,4 +31,38 @@ func Test_Permute(t *testing.T) {
 			t.Errorf("[%d] Ouput was incorrect, Permute()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
 		}
 	}
+	for _, testCase := range testCases {
+		output := Permute2(testCase.input)
+
+		if !lib.IsMatrixEqual(output, testCase.expectedOutput) {
+			t.Errorf("[%d] Ouput was incorrect, Permute2()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
+		}
+	}
+
+}
+
+func Test_ComputePossiblePosition(t *testing.T) {
+	testCases := []struct {
+		id             int
+		input          int
+		expectedOutput int
+	}{
+		{0, 1, 1},
+		{1, 2, 2},
+		{2, 3, 6},
+		{3, 4, 24},
+		{4, 5, 120},
+		{5, 6, 720},
+
+		{6, 0, 0},
+		{7, -1, 0},
+	}
+
+	for _, testCase := range testCases {
+		output := ComputePossiblePosition(testCase.input)
+
+		if output != testCase.expectedOutput {
+			t.Errorf("[%d] Ouput was incorrect, ComputePossiblePosition()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
+		}
+	}
 }
