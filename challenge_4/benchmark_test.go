@@ -1,4 +1,4 @@
-package main
+package challenge_4
 
 import (
 	"fmt"
@@ -19,6 +19,26 @@ func Benchmark_DailyTemperatures(b *testing.B) {
 		b.Run(fmt.Sprintf("%s/%d", benchmark.name, benchmark.n), func(b *testing.B) {
 			for n := 0; n < b.N; n++ {
 				DailyTemperatures(input[:benchmark.n])
+			}
+		})
+	}
+
+}
+
+func Benchmark_DailyTemperaturesBis(b *testing.B) {
+	benchmarks := []struct {
+		name string
+		n    int
+	}{
+		{"10", 10},
+		{"100", 100},
+		{"1000", 1000},
+	}
+
+	for _, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("%s/%d", benchmark.name, benchmark.n), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				DailyTemperaturesBis(input[:benchmark.n])
 			}
 		})
 	}
