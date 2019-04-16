@@ -31,23 +31,36 @@ push(5), pop() -> 5, pop() -> 3, pop() -> 2, pop() -> 1
 
 ### First round
 
-#### Draft
-```javascript
-// pushed = [1, 2]
-push(1)
-push(2)
-pop() // popped = [2]
-pop() // popped = [2, 1]
-// --------
-push(1)
-pop() // popped = [1]
-push(2)
-pop() // popped = [1, 2]
-```
-
 #### Solution
 
-TODO
+We have to push every element of the `pushed` in a stack, and each time, try to pop every element from this stack 
+if the last element is equal to the current element of `popped`.    
+At the end, if we succeed, the number of item popped must be equal to `|pushed|`
+
+Exemple:    
+```
+// ... push `pushed` elements to `stack`
+stack = [1, 2, 3, 4] 
+stack[last] == popped[0] ? pop() 
+stack = [1, 2, 3]
+stack[last] == popped[1] ? push()
+stack = [1, 2, 3, 5]
+stack[last] == popped[1] ? pop ()
+stack = [1, 2, 3]
+stack[last] == popped[2] ? pop ()
+stack = [1, 2]
+stack[last] == popped[3] ? pop ()
+stack = [1]
+stack[last] == popped[4] ? pop ()
+```
+
 
 #### Complexity
 `O(n)`
+
+#### Reality
+
+I totally failed this one, this solution is not mine. It became counter productive to continue on this one. 
+I was stuck in a bad idea that never could have worked.
+I wasn't able to think differently and I was quite disappointed by my thoughts on this one.     
+The solution looks really easy and yet, I didn't succeed. I think it's time to forget it and try another one.
