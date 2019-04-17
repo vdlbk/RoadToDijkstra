@@ -1,4 +1,4 @@
-package main
+package challenge_3
 
 func Permute(nums []int) [][]int {
 	var result [][]int
