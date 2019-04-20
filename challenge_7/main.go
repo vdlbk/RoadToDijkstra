@@ -35,3 +35,12 @@ func SingleNumberBis(nums []int) int {
 
 	return -1
 }
+
+func SingleNumberBit(nums []int) int {
+	a := 0
+	for _, x := range nums {
+		a ^= x
+	}
+
+	return a
+}

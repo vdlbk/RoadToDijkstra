@@ -26,6 +26,11 @@ func Benchmark_CountDigitOne(b *testing.B) {
 				SingleNumberBis(benchmark.input)
 			}
 		})
+		b.Run(fmt.Sprintf("SingleNumberBit %s/%d", benchmark.name, len(benchmark.input)), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				SingleNumberBit(benchmark.input)
+			}
+		})
 	}
 
 }
