@@ -1,7 +1,6 @@
 package challenge_6
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -21,19 +20,10 @@ func Test_CountDigitOne(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
-		output := SolutionCountDigitOne(testCase.input)
-		//output := CountDigitOne(testCase.input)
-		//output := SillyCountDigitOne(testCase.input)
+		output := CountDigitOne(testCase.input)
 
 		if output != testCase.expectedOutput {
 			t.Errorf("[%d] Ouput was incorrect, CountDigitOne()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
 		}
 	}
-}
-
-func Test_main(t *testing.T) {
-	x := 10
-	y := 10
-
-	fmt.Println(x / y, x % y)
 }
