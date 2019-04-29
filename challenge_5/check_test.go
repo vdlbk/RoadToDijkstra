@@ -28,7 +28,7 @@ func Test_ValidateStackSequences(t *testing.T) {
 		output := ValidateStackSequences(testCase.input.pushed, testCase.input.popped)
 
 		if output != testCase.expectedOutput {
-			t.Errorf("[%d] Ouput was incorrect, ValidateStackSequences()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
+			t.Errorf("[%d] Output was incorrect, ValidateStackSequences()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
 		}
 	}
 }

@@ -22,7 +22,7 @@ func Test_LongestCommonSubsequence(t *testing.T) {
 		output := LongestCommonSubsequence(testCase.input.s1, testCase.input.s2)
 
 		if output != testCase.expectedOutput {
-			t.Errorf("Ouput was incorrect, LongestCommonSubsequence()= %v, want: %v.", output, testCase.expectedOutput)
+			t.Errorf("Output was incorrect, LongestCommonSubsequence()= %v, want: %v.", output, testCase.expectedOutput)
 		}
 	}
 

@@ -28,7 +28,7 @@ func Test_Permute(t *testing.T) {
 		output := Permute(testCase.input)
 
 		if !lib.IsMatrixEqual(output, testCase.expectedOutput) {
-			t.Errorf("[%d] Ouput was incorrect, Permute()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
+			t.Errorf("[%d] Output was incorrect, Permute()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
 		}
 	}
 }

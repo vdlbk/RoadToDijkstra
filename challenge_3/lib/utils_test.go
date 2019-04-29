@@ -44,7 +44,7 @@ func Test_IsMatrixEqual(t *testing.T) {
 		output := IsMatrixEqual(testCase.input1, testCase.input2)
 
 		if output != testCase.expectedOutput {
-			t.Errorf("Ouput was incorrect, IsMatrixEqual()= %v, want: %v.", output, testCase.expectedOutput)
+			t.Errorf("Output was incorrect, IsMatrixEqual()= %v, want: %v.", output, testCase.expectedOutput)
 		}
 	}
 

@@ -23,7 +23,7 @@ func Test_CountDigitOne(t *testing.T) {
 		output := CountDigitOne(testCase.input)
 
 		if output != testCase.expectedOutput {
-			t.Errorf("[%d] Ouput was incorrect, CountDigitOne()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
+			t.Errorf("[%d] Output was incorrect, CountDigitOne()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
 		}
 	}
 }

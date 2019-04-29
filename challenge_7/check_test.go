@@ -22,7 +22,7 @@ func Test_SingleNumber(t *testing.T) {
 		output := SingleNumber(testCase.input)
 
 		if output != testCase.expectedOutput {
-			t.Errorf("[%d] Ouput was incorrect, SingleNumber()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
+			t.Errorf("[%d] Output was incorrect, SingleNumber()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
 		}
 	}
 }
@@ -43,7 +43,7 @@ func Test_SingleNumberBis(t *testing.T) {
 		output := SingleNumberBis(testCase.input)
 
 		if output != testCase.expectedOutput {
-			t.Errorf("[%d] Ouput was incorrect, SingleNumberBis()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
+			t.Errorf("[%d] Output was incorrect, SingleNumberBis()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
 		}
 	}
 }
@@ -63,7 +63,7 @@ func Test_SingleNumberBit(t *testing.T) {
 		output := SingleNumberBit(testCase.input)
 
 		if output != testCase.expectedOutput {
-			t.Errorf("[%d] Ouput was incorrect, SingleNumberBit()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
+			t.Errorf("[%d] Output was incorrect, SingleNumberBit()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
 		}
 	}
 }

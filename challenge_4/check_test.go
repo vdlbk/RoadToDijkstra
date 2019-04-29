@@ -23,7 +23,7 @@ func Test_DailyTemperatures(t *testing.T) {
 		output := DailyTemperatures(testCase.input)
 
 		if !reflect.DeepEqual(output, testCase.expectedOutput) {
-			t.Errorf("[%d] Ouput was incorrect, DailyTemperatures()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
+			t.Errorf("[%d] Output was incorrect, DailyTemperatures()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
 		}
 	}
 }
@@ -46,7 +46,7 @@ func Test_DailyTemperaturesBis(t *testing.T) {
 		output := DailyTemperaturesBis(testCase.input)
 
 		if !reflect.DeepEqual(output, testCase.expectedOutput) {
-			t.Errorf("[%d] Ouput was incorrect, DailyTemperaturesBis()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
+			t.Errorf("[%d] Output was incorrect, DailyTemperaturesBis()= %v, want: %v.", testCase.id, output, testCase.expectedOutput)
 		}
 	}
 }

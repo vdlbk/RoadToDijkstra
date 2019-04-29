@@ -18,7 +18,7 @@ func Test_Reverse(t *testing.T) {
 		output := Reverse(testCase.input)
 
 		if output != testCase.expectedOutput {
-			t.Errorf("Ouput was incorrect, Reverse()= %v, want: %v.", output, testCase.expectedOutput)
+			t.Errorf("Output was incorrect, Reverse()= %v, want: %v.", output, testCase.expectedOutput)
 		}
 	}
 
@@ -40,7 +40,7 @@ func Test_AltReverse(t *testing.T) {
 		output := AltReverse(testCase.input)
 
 		if output != testCase.expectedOutput {
-			t.Errorf("Ouput was incorrect, AltReverse()= %v, want: %v.", output, testCase.expectedOutput)
+			t.Errorf("Output was incorrect, AltReverse()= %v, want: %v.", output, testCase.expectedOutput)
 		}
 	}
 
@@ -81,7 +81,7 @@ func Test_MissingItem(t *testing.T) {
 		output := MissingItem(testCase.input.a1, testCase.input.a2)
 
 		if output != testCase.expectedOutput {
-			t.Errorf("Ouput was incorrect, MissingItem()= %v, want: %v.", output, testCase.expectedOutput)
+			t.Errorf("Output was incorrect, MissingItem()= %v, want: %v.", output, testCase.expectedOutput)
 		}
 	}
 
