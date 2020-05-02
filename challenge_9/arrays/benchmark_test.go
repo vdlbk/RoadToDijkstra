@@ -178,3 +178,25 @@ func BenchmarkIntersect(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkPlusOne(b *testing.B) {
+	benchmarks := []struct {
+		n []int
+	}{
+		{[]int{1, 2, 3}},
+		{[]int{4, 3, 2, 1}},
+		{[]int{1, 0, 9}},
+		{[]int{9, 9, 9}},
+		{[]int{1}},
+		{[]int{9}},
+		{[]int{2, 4, 5, 6, 7, 8, 9, 0, 2, 4, 5, 6, 7, 8, 9, 0, 2, 4, 5, 6, 7, 8, 9, 0, 2, 4, 5, 6, 2, 4, 5, 6, 7, 8, 9}},
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("plusOne %d", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				plusOne(benchmark.n)
+			}
+		})
+	}
+}

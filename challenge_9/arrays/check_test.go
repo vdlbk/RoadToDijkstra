@@ -183,3 +183,31 @@ func TestIntersect(t *testing.T) {
 		})
 	}
 }
+
+func TestPlusOne(t *testing.T) {
+	testCases := []struct {
+		input          []int
+		expectedOutput []int
+	}{
+		{[]int{1, 2, 3}, []int{1, 2, 4}},
+		{[]int{4, 3, 2, 1}, []int{4, 3, 2, 2}},
+		{[]int{1, 0, 9}, []int{1, 1, 0}},
+		{[]int{9, 9, 9}, []int{1, 0, 0, 0}},
+		{[]int{1}, []int{2}},
+		{[]int{9}, []int{1, 0}},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("plusOne", func(t *testing.T) {
+			output := plusOne(testCase.input)
+
+			if !reflect.DeepEqual(output, testCase.expectedOutput) {
+				t.Errorf("[%d] Output was incorrect, plusOne(%v)= %v, want: %v.", i,
+					testCase.input,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
