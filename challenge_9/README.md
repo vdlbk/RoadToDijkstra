@@ -1,10 +1,4 @@
-# Challenge X: Foobar
+# Challenge 9: Top Interview Questions
 
-URL
-
-## Description
-
-## Examples
-
-## Note:
+https://leetcode.com/explore/featured/card/top-interview-questions-easy
 
