@@ -16,16 +16,16 @@ func containsDuplicate(nums []int) bool {
 }
 
 func containsDuplicateAlt(nums []int) bool {
-	moi:= make(map[int]bool,0)
+	moi := make(map[int]bool, 0)
 
-	for i:= 0; i< len(nums); i++{
+	for i := 0; i < len(nums); i++ {
 
 		num := nums[i]
-		if _, ok:= moi[num]; ok{
-			return  true
+		if _, ok := moi[num]; ok {
+			return true
 		}
 
-		moi[num]= true
+		moi[num] = true
 	}
 
 	return false

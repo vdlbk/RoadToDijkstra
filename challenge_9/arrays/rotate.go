@@ -3,8 +3,8 @@ package arrays
 func rotate(nums []int, k int) {
 	m := make(map[int]int)
 	newPosition := 0
-	for i := 0; i < len(nums); i++{
-		newPosition = (i + k)%len(nums)
+	for i := 0; i < len(nums); i++ {
+		newPosition = (i + k) % len(nums)
 		m[newPosition] = nums[newPosition]
 		if x, exists := m[i]; exists {
 			nums[newPosition] = x
