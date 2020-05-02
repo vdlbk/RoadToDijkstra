@@ -81,3 +81,61 @@ func BenchmarkRotate(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkContainsDuplicate(b *testing.B) {
+	benchmarks := []struct {
+		n    []int
+	}{
+		{[]int{1,2,3,1}},
+		{[]int{1,2,3,4}},
+		{[]int{1,1,1,3,3,4,3,2,4,2}},
+		{[]int{1,1,1,3,3,4,3,2,4,2}},
+		{[]int{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,13}},
+		{[]int{}},
+		{[]int{10000000}},
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("containsDuplicate %d", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				containsDuplicate(benchmark.n)
+			}
+		})
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("containsDuplicateAlt %d", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				containsDuplicateAlt(benchmark.n)
+			}
+		})
+	}
+}
+
+func BenchmarkSingleNumber(b *testing.B) {
+	benchmarks := []struct {
+		n    []int
+	}{
+		{[]int{2, 2, 1}},
+		{[]int{4,1,2,1,2}},
+		{[]int{1}},
+		{[]int{-1, -1, -2, -4, -2, -7, -4}},
+		{[]int{-1, -10, -2, -9, -3, -8, -4, -7, -5, -6, -6, -5, -7, -4, -8, -3, -9, -2, -10, -1, 0}},
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("singleNumber %d", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				singleNumber(benchmark.n)
+			}
+		})
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("singleNumberAlt %d", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				singleNumberAlt(benchmark.n)
+			}
+		})
+	}
+}

@@ -105,6 +105,10 @@ func TestContainsDuplicate(t *testing.T) {
 		{[]int{1,2,3,1}, true},
 		{[]int{1,2,3,4}, false},
 		{[]int{1,1,1,3,3,4,3,2,4,2}, true},
+		{[]int{1,1,1,3,3,4,3,2,4,2}, true},
+		{[]int{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,13}, true},
+		{[]int{}, false},
+		{[]int{10000000}, false},
 	}
 
 	for i, testCase := range testCases {
@@ -113,6 +117,33 @@ func TestContainsDuplicate(t *testing.T) {
 
 			if output != testCase.expectedOutput {
 				t.Errorf("[%d] Output was incorrect, containsDuplicate(%v)= %v, want: %v.", i,
+					testCase.input,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
+
+func TestSingleNumber(t *testing.T) {
+	testCases := []struct {
+		input          []int
+		expectedOutput int
+	}{
+		{[]int{2, 2, 1}, 1},
+		{[]int{4,1,2,1,2}, 4},
+		{[]int{1}, 1},
+		{[]int{-1, -1, -2, -4, -2, -7, -4}, -7},
+		{[]int{-1, -10, -2, -9, -3, -8, -4, -7, -5, -6, -6, -5, -7, -4, -8, -3, -9, -2, -10, -1, 0}, 0},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("singleNumber", func(t *testing.T) {
+			output := singleNumberAlt(testCase.input)
+
+			if output != testCase.expectedOutput {
+				t.Errorf("[%d] Output was incorrect, singleNumber(%v)= %v, want: %v.", i,
 					testCase.input,
 					output,
 					testCase.expectedOutput,
