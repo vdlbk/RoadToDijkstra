@@ -248,3 +248,33 @@ func TestMoveZero(t *testing.T) {
 		})
 	}
 }
+
+func TestTwoSum(t *testing.T) {
+	testCases := []struct {
+		input          []int
+		k              int
+		expectedOutput []int
+	}{
+		{[]int{2, 7, 11, 15}, 9, []int{0, 1}},
+		{[]int{1, 2, 0, 3}, 2, []int{1, 2}},
+		{[]int{1, 2, 3, 4, 5}, 8, []int{2, 4}},
+		{[]int{1, 2, 3, 4, 5, 3}, 8, []int{2, 4}},
+		{[]int{1, 2}, 3, []int{0, 1}},
+		{[]int{1, 2, 4, 4, 2, 1}, 8, []int{2, 3}},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := twoSum(testCase.input, testCase.k)
+
+			if !reflect.DeepEqual(output, testCase.expectedOutput) {
+				t.Errorf("[%d] Output was incorrect, rotate(%v, %v)= %v, want: %v.", i,
+					testCase.input,
+					testCase.k,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
