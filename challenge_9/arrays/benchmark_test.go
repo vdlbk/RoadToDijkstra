@@ -200,3 +200,36 @@ func BenchmarkPlusOne(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkMoveZeroes(b *testing.B) {
+	benchmarks := []struct {
+		n []int
+	}{
+		{[]int{0, 1, 0, 3, 12}},
+		{[]int{0, 1}},
+		{[]int{1, 2, 3}},
+		{[]int{0, 0, 0, 0}},
+		{[]int{1, 0, 0, 0}},
+		{[]int{1}},
+		{[]int{}},
+		{[]int{
+			2, 4, 5043, 4343, 0, 363, 345, 238, 0, 67, 33, 4, 0, 6, 2, 7, 7, 7, 0, 0, 0, 0, 0, 1, 0, 3, 0,
+		}},
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("moveZeroes %d", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				moveZeroes(benchmark.n)
+			}
+		})
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("moveZeroesAlt %d", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				moveZeroesAlt(benchmark.n)
+			}
+		})
+	}
+}

@@ -211,3 +211,40 @@ func TestPlusOne(t *testing.T) {
 		})
 	}
 }
+
+func TestMoveZero(t *testing.T) {
+	testCases := []struct {
+		raw            []int
+		input          []int
+		expectedOutput []int
+	}{
+		{[]int{0, 1, 0, 3, 12}, []int{0, 1, 0, 3, 12}, []int{1, 3, 12, 0, 0}},
+		{[]int{0, 1}, []int{0, 1}, []int{1, 0}},
+		{[]int{1, 2, 3}, []int{1, 2, 3}, []int{1, 2, 3}},
+		{[]int{0, 0, 0, 0}, []int{0, 0, 0, 0}, []int{0, 0, 0, 0}},
+		{[]int{1, 0, 0, 0}, []int{1, 0, 0, 0}, []int{1, 0, 0, 0}},
+		{[]int{1}, []int{1}, []int{1}},
+		{[]int{}, []int{}, []int{}},
+		{[]int{
+			2, 4, 5043, 4343, 0, 363, 345, 238, 0, 67, 33, 4, 0, 6, 2, 7, 7, 7, 0, 0, 0, 0, 0, 1, 0, 3, 0,
+		}, []int{
+			2, 4, 5043, 4343, 0, 363, 345, 238, 0, 67, 33, 4, 0, 6, 2, 7, 7, 7, 0, 0, 0, 0, 0, 1, 0, 3, 0,
+		}, []int{
+			2, 4, 5043, 4343, 363, 345, 238, 67, 33, 4, 6, 2, 7, 7, 7, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		}},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("moveZeroes", func(t *testing.T) {
+			moveZeroes(testCase.input)
+
+			if !reflect.DeepEqual(testCase.input, testCase.expectedOutput) {
+				t.Errorf("[%d] Output was incorrect, moveZeroes(%v)= %v, want: %v.", i,
+					testCase.raw,
+					testCase.input,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
