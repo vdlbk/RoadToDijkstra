@@ -32,3 +32,33 @@ func BenchmarkRemoveDuplicates(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkIsAnagram(b *testing.B) {
+	benchmarks := []struct {
+		s string
+		t string
+	}{
+		{"", ""},
+		{"foo", "oof"},
+		{"foobar", "barfoo"},
+		{"anagram", "nagaram"},
+		{"wazaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaazaw",
+			"zawaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaawaz"},
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("isAnagram %v", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				isAnagram(benchmark.s, benchmark.t)
+			}
+		})
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("isAnagramOpti %v", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				isAnagramOpti(benchmark.s, benchmark.t)
+			}
+		})
+	}
+}

@@ -69,3 +69,65 @@ func TestReverse(t *testing.T) {
 		})
 	}
 }
+
+func TestFirstUniqChar(t *testing.T) {
+	testCases := []struct {
+		input          string
+		expectedOutput int
+	}{
+		{"leetcode", 0},     // l
+		{"loveleetcode", 2}, // v
+		{"foooof", -1},      // none
+		{"x", 0},            // x
+		{"", -1},            // none
+		{"polop", 2},        // l
+		{"aabbz", 4},        // z
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := firstUniqChar(testCase.input)
+
+			if output != testCase.expectedOutput {
+				t.Errorf("[%d] Output was incorrect, firstUniqChar(%v) = %v, want: %v.", i,
+					testCase.input,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
+
+func TestIsAnagram(t *testing.T) {
+	testCases := []struct {
+		input1         string
+		input2         string
+		expectedOutput bool
+	}{
+		{"anagram", "nagaram", true},
+		{"ra", "ar", true},
+		{"z", "z", true},
+		{"", "", true},
+		{"ofo", "ofo", true},
+		{"poloolop", "poloolop", true},
+		{"velo", "love", true},
+		{"rat", "car", false},
+		{"foo", "bar", false},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := isAnagram(testCase.input1, testCase.input2)
+
+			if output != testCase.expectedOutput {
+				t.Errorf("[%d] Output was incorrect, isAnagram(%v, %v) = %v, want: %v.", i,
+					testCase.input1,
+					testCase.input2,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
