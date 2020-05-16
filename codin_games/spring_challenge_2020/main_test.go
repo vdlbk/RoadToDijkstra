@@ -92,6 +92,46 @@ func TestSortCells_WithSight(t *testing.T) {
 	fmt.Println(expectedSlice)
 }
 
+func TestSortCells_WithSight2(t *testing.T) {
+	Point := struct {
+		X int
+		Y int
+	}{
+		X: 5,
+		Y: 5,
+	}
+	slice := Cells{
+		{X: 4, Y: 1, Value: 1, Dist: 0, CurrentlyInSight: false},
+		{X: 5, Y: 1, Value: 1, Dist: 0, CurrentlyInSight: false},
+		{X: 15, Y: 5, Value: 1, Dist: 0, CurrentlyInSight: true},
+		{X: 16, Y: 5, Value: 1, Dist: 0, CurrentlyInSight: true},
+		{X: 17, Y: 5, Value: 1, Dist: 0, CurrentlyInSight: true},
+		{X: 30, Y: 5, Value: 1, Dist: 0, CurrentlyInSight: true},
+		{X: 31, Y: 5, Value: 1, Dist: 0, CurrentlyInSight: true},
+		{X: 16, Y: 3, Value: 1, Dist: 0, CurrentlyInSight: false},
+	}
+
+	slice.Calibrate(Point.X, Point.Y)
+
+	fmt.Println(slice)
+
+	sort.Sort(slice)
+	fmt.Println(slice)
+
+	expectedSlice := Cells{
+		{X: 5, Y: 1, Value: 1, Dist: 0, CurrentlyInSight: false},
+		{X: 4, Y: 1, Value: 1, Dist: 0, CurrentlyInSight: false},
+		{X: 15, Y: 5, Value: 1, Dist: 0, CurrentlyInSight: true},
+		{X: 16, Y: 5, Value: 1, Dist: 0, CurrentlyInSight: true},
+		{X: 17, Y: 5, Value: 1, Dist: 0, CurrentlyInSight: true},
+		{X: 30, Y: 5, Value: 1, Dist: 0, CurrentlyInSight: true},
+		{X: 31, Y: 5, Value: 1, Dist: 0, CurrentlyInSight: true},
+		{X: 16, Y: 3, Value: 1, Dist: 0, CurrentlyInSight: false},
+	}
+	expectedSlice.Calibrate(Point.X, Point.Y)
+	fmt.Println(expectedSlice)
+}
+
 func TestCells_Upsert(t *testing.T) {
 	slice := Cells{}
 	slice.Upsert(&Cell{X: 0, Y: 1})
@@ -262,6 +302,56 @@ func TestSameDist(t *testing.T) {
 	pacsManager.Decide()
 }
 
+func TestPacsManager_CheckSingleClosestCells(t *testing.T) {
+	width, height := 34, 15
+	pacsManager := NewPacsManager(width, height)
+	for i := 0; i < height; i++ {
+		pacsManager.ManageGrid(i, strings.Repeat(" ", width))
+	}
+
+	pacsManager.NewRound()
+	pacsManager.ManagePac(true, 0, 7, 6, Rock, 0, 5)
+	pacsManager.ManagePac(true, 1, 7, 6, Rock, 0, 5)
+	pacsManager.ManagePac(true, 3, 7, 6, Rock, 0, 5)
+	pacsManager.ManagePac(true, 4, 7, 6, Rock, 0, 5)
+	pacsManager.NotifyPacs()
+
+	pacsManager.RegisterPellet(8, 7, 10)
+	pacsManager.RegisterPellet(9, 5, 1)
+	pacsManager.RegisterPellet(8, 5, 1)
+	pacsManager.RegisterPellet(4, 11, 1)
+	pacsManager.RegisterPellet(5, 9, 1)
+	pacsManager.RegisterPellet(5, 11, 1)
+	pacsManager.RegisterPellet(20, 9, 1)
+	pacsManager.RegisterPellet(18, 9, 1)
+
+	cells0 := Cells{{X: 8, Y: 7, Value: 10, Dist: 2.828}, {X: 9, Y: 5, Value: 1, Dist: 1}, {X: 8, Y: 5, Value: 1, Dist: 2}}
+	cells1 := Cells{{X: 8, Y: 7, Value: 10, Dist: 6.403}, {X: 4, Y: 11, Value: 1, Dist: 1}, {X: 5, Y: 11, Value: 1, Dist: 2}}
+	cells3 := Cells{{X: 8, Y: 7, Value: 10, Dist: 11.402}, {X: 20, Y: 9, Value: 1, Dist: 1.414}, {X: 18, Y: 9, Value: 1, Dist: 1.414}}
+	cells4 := Cells{{X: 8, Y: 7, Value: 10, Dist: 4.472}, {X: 5, Y: 9, Value: 1, Dist: 1}, {X: 4, Y: 11, Value: 1, Dist: 2}}
+
+	closestCells := make(map[int]*Cell)
+	closestCells[3] = cells3[0]
+	closestCells[4] = cells4[0]
+	closestCells[0] = cells0[0]
+	closestCells[1] = cells1[0]
+
+	pacsManager.Tmp(closestCells)
+	m := pacsManager.CheckSingleClosestCells(closestCells, 0)
+	if !m[0].Equals(&Cell{X: 8, Y: 7}) {
+		t.Errorf("Unexpected cell for %v. Got: %v; want: %v", 0, m[0], &Cell{X: 8, Y: 7})
+	}
+	if !m[1].Equals(&Cell{X: 4, Y: 11}) {
+		t.Errorf("Unexpected cell for %v. Got: %v; want: %v", 1, m[1], &Cell{X: 4, Y: 11})
+	}
+	if !m[3].Equals(&Cell{X: 20, Y: 9}) || !m[3].Equals(&Cell{X: 18, Y: 9}) {
+		t.Errorf("Unexpected cell for %v. Got: %v; want: %v or %v", 3, m[3], &Cell{X: 20, Y: 9}, &Cell{X: 18, Y: 9})
+	}
+	if !m[4].Equals(&Cell{X: 5, Y: 9}) {
+		t.Errorf("Unexpected cell for %v. Got: %v; want: %v", 4, m[4], &Cell{X: 5, Y: 9})
+	}
+}
+
 func initTestPellet(pacsManager *PacsManager, super int) {
 	if super == 0 {
 		pacsManager.RegisterPellet(15, 11, 1)
@@ -338,7 +428,7 @@ func TestPac_InitSight(t *testing.T) {
 	pacManager.ManageGrid(6, "# # ##### # # ##### # # #####   #")
 	pacManager.ManageGrid(7, "# #   #     #       #     #     #")
 	pacManager.ManageGrid(8, "### # # # # ######### # # # #  ##")
-	pacManager.ManageGrid(9, "        # #           # #     *  ")
+	pacManager.ManageGrid(9, "        # #           # #        ")
 	pacManager.ManageGrid(10, "# # ##### ##### # ##### ######  #")
 	pacManager.ManageGrid(11, "#               #               #")
 	pacManager.ManageGrid(12, "############################## ##")
@@ -361,5 +451,29 @@ func TestPac_InitSight(t *testing.T) {
 	// 15 + 12
 	if len(pacManager.Pacs[2].Sight) != 27 {
 		t.Errorf("Unexpected length. Got: %v; Want: %v", len(pacManager.Pacs[2].Sight), 27)
+	}
+}
+
+func TestPac_InitSight2(t *testing.T) {
+	pacManager := NewPacsManager(33, 13)
+	pacManager.ManageGrid(0, "############################## ##")
+	pacManager.ManageGrid(1, "#     # #   #       #   # #     #")
+	pacManager.ManageGrid(2, "# # ### ### # # # # # ### ###   #")
+	pacManager.ManageGrid(3, "# #   #       #   #       #     #")
+	pacManager.ManageGrid(4, "# ### # ##### # # # ##### # ##  #")
+	pacManager.ManageGrid(5, "              #   #              ")
+	pacManager.ManageGrid(6, "# # ##### # # ##### # # #####   #")
+	pacManager.ManageGrid(7, "# #   #     #       #     #     #")
+	pacManager.ManageGrid(8, "### # # # # ######### # # # #  ##")
+	pacManager.ManageGrid(9, "        # #           # #        ")
+	pacManager.ManageGrid(10, "# # ##### ##### # ##### ######  #")
+	pacManager.ManageGrid(11, "#               #               #")
+	pacManager.ManageGrid(12, "############################## ##")
+
+	pacManager.ManagePac(true, 0, 0, 9, Rock, 0, 0)
+	pacManager.Pacs[0].InitSight(&pacManager)
+
+	if len(pacManager.Pacs[0].Sight) != 15 {
+		t.Errorf("Unexpected length. Got: %v; Want: %v", len(pacManager.Pacs[0].Sight), 15)
 	}
 }
