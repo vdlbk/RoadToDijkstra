@@ -131,3 +131,32 @@ func TestIsAnagram(t *testing.T) {
 		})
 	}
 }
+
+func TestIsPalindrome(t *testing.T) {
+	testCases := []struct {
+		input          string
+		expectedOutput bool
+	}{
+		{"A man, a plan, a canal: Panama", true},
+		{"Hannah", true},
+		{"", true},
+		{"a", true},
+		{"aa", true},
+
+		{"race a car", false},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := isPalindrome(testCase.input)
+
+			if output != testCase.expectedOutput {
+				t.Errorf("[%d] Output was incorrect, isPalindrome(%v) = %v, want: %v.", i,
+					testCase.input,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
