@@ -13,6 +13,7 @@ const (
 	Rock        = "ROCK"
 	Paper       = "PAPER"
 	Scissors    = "SCISSORS"
+	Dead        = "DEAD"
 	Wall        = "#"
 	EmptyCell   = " "
 	Pellet      = "*"
@@ -152,6 +153,10 @@ func (p *PacsManager) NotifyPacs() {
 		}
 
 		for _, enemy := range p.Enemies {
+			if enemy.Type == Dead {
+				delete(p.EnemiesInSight[pac.ID], enemy)
+				continue
+			}
 			cell := pac.SeeEnemy(p.EnemiesInSight, enemy)
 			p.EnemiesInSight[pac.ID][enemy] = cell
 			cells.Remove(enemy.X, enemy.Y)
@@ -190,7 +195,7 @@ func (p *PacsManager) Decide() {
 		sort.Sort(cells)
 		p.PelletsInSight[pacID] = cells
 
-		// debug(pacID, "closest are:", cells[:3])
+		debug(pacID, "closest are:", cells[:3])
 
 		if cell := p.FindClosestCell(pacID, 0); cell != nil {
 			closestCells[pacID] = cell
@@ -222,6 +227,11 @@ func (p *PacsManager) Decide() {
 			if len(p.PelletsInSight[pacID]) == 0 {
 				debug("go to random position")
 				// TODO
+				for _, cell := range pac.Sight {
+					delete(closestCells, pacID)
+					action = append(action, pac.Move(cell.X, cell.Y))
+					continue
+				}
 			}
 
 			// if pac is stuck for some turn
@@ -254,10 +264,11 @@ func (p *PacsManager) Decide() {
 }
 
 func (p *PacsManager) CheckSingleClosestCells(closestCells map[int]*Cell, startIdx int) map[int]*Cell {
+	debug("check", closestCells)
 	for pacID, cell := range closestCells {
 		cursor := startIdx
 		otherPacIDs := p.GetOtherPacID(pacID)
-		for i := 0; i < len(otherPacIDs); {
+		for i := 0; i < len(otherPacIDs); i++ {
 			otherPacID := otherPacIDs[i]
 			otherCell := closestCells[otherPacID]
 			if otherCell != nil && otherCell.Equals(cell) && otherCell.Dist <= cell.Dist {
@@ -265,11 +276,10 @@ func (p *PacsManager) CheckSingleClosestCells(closestCells map[int]*Cell, startI
 				cursor++
 				if c := p.FindClosestCell(pacID, cursor); c != nil {
 					cell = c
-					i = 0
+					break
+					//i = 0
 				}
 
-			} else {
-				i++
 			}
 		}
 		closestCells[pacID] = cell
@@ -278,8 +288,9 @@ func (p *PacsManager) CheckSingleClosestCells(closestCells map[int]*Cell, startI
 	for pacID, cell := range closestCells {
 		for otherPacID, otherCell := range closestCells {
 			if pacID != otherPacID && cell != nil && cell.Equals(otherCell) {
-				if startIdx > 10 {
+				if startIdx >= len(closestCells) {
 					closestCells[pacID] = nil
+					closestCells[otherPacID] = nil
 					break
 				} else {
 					return p.CheckSingleClosestCells(closestCells, startIdx+1)
@@ -288,6 +299,8 @@ func (p *PacsManager) CheckSingleClosestCells(closestCells map[int]*Cell, startI
 			}
 		}
 	}
+
+	debug("check now ok", closestCells)
 
 	return closestCells
 }
@@ -496,7 +509,7 @@ func (p *Pac) CheckEnemies(pacManager *PacsManager) (string, bool) {
 		if cell.Trend < 0 && cell.Value < 0 {
 			// Danger: an enemy is coming and can eat me. Try to morph into his weak spot
 			debug(p.ID, "danger", enemy, cell)
-			if s, ok := p.AskForMorph(weakSpot(enemy.Type)); ok {
+			if s, ok := p.AskForMorph(weakSpot(enemy.Type)); ok && cell.Dist <= 1 {
 				return s, ok
 			} else {
 				debug(p.ID, "failed to morph in danger situation", ok, enemy, cell)
@@ -698,6 +711,9 @@ func (c *Cell) String() string {
 }
 
 func (c *Cell) Equals(other *Cell) bool {
+	if other == nil || c == nil {
+		return false
+	}
 	return c.X == other.X && c.Y == other.Y
 }
 
