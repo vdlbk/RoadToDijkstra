@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"reflect"
 	"sort"
 	"strings"
 	"testing"
 )
 
 func TestPlayground(t *testing.T) {
-	fmt.Println(rand.Intn(0))
+	fmt.Println(rand.Intn(1))
 }
 
 func TestSortCells(t *testing.T) {
@@ -50,6 +51,10 @@ func TestSortCells(t *testing.T) {
 	}
 	expectedSlice.Calibrate(Point.X, Point.Y)
 	fmt.Println(expectedSlice)
+
+	if !reflect.DeepEqual(expectedSlice, slice) {
+		t.Error("unexepected slice")
+	}
 }
 
 func TestSortCells_WithSight(t *testing.T) {
@@ -84,12 +89,16 @@ func TestSortCells_WithSight(t *testing.T) {
 		{X: 3, Y: 3, Value: 1, Dist: 0, CurrentlyInSight: true},
 		{X: 2, Y: 1, Value: 1, Dist: 0, CurrentlyInSight: true},
 		{X: 1, Y: 0, Value: 1, Dist: 0, CurrentlyInSight: true},
-		{X: 0, Y: 1, Value: 1, Dist: 0, CurrentlyInSight: false},
 		{X: 6, Y: 2, Value: 1, Dist: 0, CurrentlyInSight: true},
+		{X: 0, Y: 1, Value: 1, Dist: 0, CurrentlyInSight: false},
 		{X: 4, Y: 8, Value: 1, Dist: 0, CurrentlyInSight: true},
 	}
 	expectedSlice.Calibrate(Point.X, Point.Y)
 	fmt.Println(expectedSlice)
+
+	if !reflect.DeepEqual(expectedSlice, slice) {
+		t.Error("unexepected slice")
+	}
 }
 
 func TestSortCells_WithSight2(t *testing.T) {
@@ -130,6 +139,10 @@ func TestSortCells_WithSight2(t *testing.T) {
 	}
 	expectedSlice.Calibrate(Point.X, Point.Y)
 	fmt.Println(expectedSlice)
+
+	if !reflect.DeepEqual(expectedSlice, slice) {
+		t.Error("unexepected slice")
+	}
 }
 
 func TestCells_Upsert(t *testing.T) {
@@ -303,6 +316,7 @@ func TestSameDist(t *testing.T) {
 }
 
 func TestPacsManager_CheckSingleClosestCells(t *testing.T) {
+
 	width, height := 34, 15
 	pacsManager := NewPacsManager(width, height)
 	for i := 0; i < height; i++ {
@@ -310,10 +324,10 @@ func TestPacsManager_CheckSingleClosestCells(t *testing.T) {
 	}
 
 	pacsManager.NewRound()
-	pacsManager.ManagePac(true, 0, 7, 6, Rock, 0, 5)
-	pacsManager.ManagePac(true, 1, 7, 6, Rock, 0, 5)
-	pacsManager.ManagePac(true, 3, 7, 6, Rock, 0, 5)
-	pacsManager.ManagePac(true, 4, 7, 6, Rock, 0, 5)
+	pacsManager.ManagePac(true, 0, 10, 5, Rock, 0, 5)
+	pacsManager.ManagePac(true, 1, 3, 11, Rock, 0, 5)
+	pacsManager.ManagePac(true, 3, 19, 10, Rock, 0, 5)
+	pacsManager.ManagePac(true, 4, 4, 9, Rock, 0, 5)
 	pacsManager.NotifyPacs()
 
 	pacsManager.RegisterPellet(8, 7, 10)
@@ -336,19 +350,82 @@ func TestPacsManager_CheckSingleClosestCells(t *testing.T) {
 	closestCells[0] = cells0[0]
 	closestCells[1] = cells1[0]
 
-	pacsManager.Tmp(closestCells)
+	for pacID, pac := range pacsManager.Pacs {
+		cells := pacsManager.PelletsInSight[pacID]
+		cells.Calibrate(pac.X, pac.Y)
+		sort.Sort(cells)
+		pacsManager.PelletsInSight[pacID] = cells
+	}
+
 	m := pacsManager.CheckSingleClosestCells(closestCells, 0)
+	fmt.Println(m)
 	if !m[0].Equals(&Cell{X: 8, Y: 7}) {
 		t.Errorf("Unexpected cell for %v. Got: %v; want: %v", 0, m[0], &Cell{X: 8, Y: 7})
 	}
 	if !m[1].Equals(&Cell{X: 4, Y: 11}) {
 		t.Errorf("Unexpected cell for %v. Got: %v; want: %v", 1, m[1], &Cell{X: 4, Y: 11})
 	}
-	if !m[3].Equals(&Cell{X: 20, Y: 9}) || !m[3].Equals(&Cell{X: 18, Y: 9}) {
+	if !m[3].Equals(&Cell{X: 20, Y: 9}) && !m[3].Equals(&Cell{X: 18, Y: 9}) {
 		t.Errorf("Unexpected cell for %v. Got: %v; want: %v or %v", 3, m[3], &Cell{X: 20, Y: 9}, &Cell{X: 18, Y: 9})
 	}
 	if !m[4].Equals(&Cell{X: 5, Y: 9}) {
 		t.Errorf("Unexpected cell for %v. Got: %v; want: %v", 4, m[4], &Cell{X: 5, Y: 9})
+	}
+
+}
+
+func TestPacsManager_CheckSingleClosestCells2(t *testing.T) {
+
+	width, height := 34, 15
+	pacsManager := NewPacsManager(width, height)
+	for i := 0; i < height; i++ {
+		pacsManager.ManageGrid(i, strings.Repeat(" ", width))
+	}
+
+	pacsManager.NewRound()
+	pacsManager.ManagePac(true, 0, 5, 8, Rock, 0, 5)
+	pacsManager.ManagePac(true, 1, 6, 7, Rock, 0, 5)
+	pacsManager.ManagePac(true, 2, 7, 2, Rock, 0, 5)
+	pacsManager.NotifyPacs()
+
+	pacsManager.RegisterPellet(11, 4, 10)
+	pacsManager.RegisterPellet(13, 3, 10)
+	pacsManager.RegisterPellet(21, 3, 10)
+
+	cells0 := Cells{{X: 11, Y: 4, Value: 10, Dist: 7.211}, {X: 13, Y: 3, Value: 10, Dist: 9.434}, {X: 21, Y: 3, Value: 10, Dist: 16.763}}
+	cells1 := Cells{{X: 11, Y: 4, Value: 10, Dist: 5.831}, {X: 13, Y: 3, Value: 10, Dist: 8.062}, {X: 21, Y: 3, Value: 10, Dist: 15.524}}
+	cells2 := Cells{{X: 11, Y: 4, Value: 10, Dist: 4.472}, {X: 13, Y: 3, Value: 10, Dist: 6.083}, {X: 21, Y: 3, Value: 10, Dist: 14.036}}
+
+	closestCells := make(map[int]*Cell)
+	closestCells[0] = cells0[0]
+	closestCells[1] = cells1[0]
+	closestCells[2] = cells2[0]
+
+	for pacID, pac := range pacsManager.Pacs {
+		cells := pacsManager.PelletsInSight[pacID]
+		cells.Calibrate(pac.X, pac.Y)
+		sort.Sort(cells)
+		pacsManager.PelletsInSight[pacID] = cells
+	}
+
+	m := pacsManager.CheckSingleClosestCells(closestCells, 0)
+	fmt.Println(m)
+	if !m[0].Equals(&Cell{X: 21, Y: 3}) {
+		t.Errorf("Unexpected cell for %v. Got: %v; want: %v", 0, m[0], &Cell{X: 21, Y: 3})
+	}
+	if !m[1].Equals(&Cell{X: 13, Y: 3}) {
+		t.Errorf("Unexpected cell for %v. Got: %v; want: %v", 1, m[1], &Cell{X: 13, Y: 3})
+	}
+	if !m[2].Equals(&Cell{X: 11, Y: 4}) {
+		t.Errorf("Unexpected cell for %v. Got: %v; want: %v", 2, m[2], &Cell{X: 11, Y: 4})
+	}
+
+}
+
+func TestTmp(t *testing.T) {
+	for i := 0; i < 200; i++ {
+		t.Run("1", TestPacsManager_CheckSingleClosestCells)
+		t.Run("2", TestPacsManager_CheckSingleClosestCells2)
 	}
 }
 

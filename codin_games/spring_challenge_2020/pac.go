@@ -98,12 +98,13 @@ func (p *PacsManager) ManagePac(mine bool, pacID, x, y int, pacType string, spee
 			p.PelletsInSight[pacID] = []*Cell{}
 		}
 		p.Pacs[pacID].InitSight(p)
-		p.PacIDs = append(p.PacIDs)
+		p.PacIDs = append(p.PacIDs, pacID)
 	} else {
 		if pac, ok := p.Enemies[pacID]; ok {
 			pac.Update(x, y, pacType, speedTurnsLeft, abilityCooldown, p.Round)
 		} else {
 			p.Enemies[pacID] = NewPac(pacID, x, y, pacType, speedTurnsLeft, abilityCooldown)
+			p.Enemies[pacID].ActiveRoundsCount = p.Round
 		}
 		p.Enemies[pacID].InitSight(p)
 	}
@@ -189,7 +190,7 @@ func (p *PacsManager) Decide() {
 		sort.Sort(cells)
 		p.PelletsInSight[pacID] = cells
 
-		debug(pacID, "closest are:", cells[:3])
+		// debug(pacID, "closest are:", cells[:3])
 
 		if cell := p.FindClosestCell(pacID, 0); cell != nil {
 			closestCells[pacID] = cell
@@ -229,16 +230,11 @@ func (p *PacsManager) Decide() {
 				immobileLimit = 1
 			}
 			if pac.ImmobileSince > immobileLimit {
-				// TODO: Find a thing to do when the pac is stuck for a while
-				cellToAvoid := p.GetCellToAvoid(pac)
-
-				debug(pacID, "stuck try to avoid", cellToAvoid)
-				if s := pac.AvoidCell(cellToAvoid.X, cellToAvoid.X); len(s) > 0 {
-					delete(closestCells, pacID)
-					action = append(action, s)
-					continue
+				delete(closestCells, pacID)
+				// TODO
+				if cell := p.FindFarthestCell(pac.ID); cell != nil {
+					action = append(action, pac.Move(cell.X, cell.Y))
 				}
-				debug("failed to avoid cell")
 			}
 		}
 	}
@@ -257,66 +253,42 @@ func (p *PacsManager) Decide() {
 	p.PacIDs = []int{}
 }
 
-func (p *PacsManager) Tmp(closestCells map[int]*Cell) map[int]*Cell {
-	issues := Cells{}
-	cursor := 0
-	for pacID, cell := range closestCells {
-		for _, otherPacID := range p.GetOtherPacID(pacID) {
-			if otherCell := p.PelletsInSight[otherPacID][cursor]; otherCell.Equals(cell) && otherCell.Dist < cell.Dist {
-				// otherPacID est plus proche que pacID pour cette cellule
-				cell = p.FindClosestCell(pacID, cursor+1)
-			}
-		}
-	}
-
-	return closestCells
-}
-
 func (p *PacsManager) CheckSingleClosestCells(closestCells map[int]*Cell, startIdx int) map[int]*Cell {
 	for pacID, cell := range closestCells {
-		for otherPacID, otherCell := range closestCells {
-			if pacID == otherPacID || !cell.Equals(otherCell) {
-				continue
-			}
-			if cell.Dist < otherCell.Dist {
-				if closestCell := p.FindClosestCell(otherPacID, startIdx+1); closestCell != nil {
-					debug(otherPacID, " is changing closest cell (conflict with", pacID, ") to <", closestCell)
-					closestCells[otherPacID] = closestCell
-				} else {
-					debug("failed to find closest cell during check single <", otherPacID, startIdx+1)
-					closestCells[otherPacID] = nil
-					return closestCells
+		cursor := startIdx
+		otherPacIDs := p.GetOtherPacID(pacID)
+		for i := 0; i < len(otherPacIDs); {
+			otherPacID := otherPacIDs[i]
+			otherCell := closestCells[otherPacID]
+			if otherCell != nil && otherCell.Equals(cell) && otherCell.Dist <= cell.Dist {
+				// otherPacID est plus proche que pacID pour cette cellule
+				cursor++
+				if c := p.FindClosestCell(pacID, cursor); c != nil {
+					cell = c
+					i = 0
 				}
-				return p.CheckSingleClosestCells(closestCells, startIdx+1)
-			} else if cell.Dist > otherCell.Dist {
-				if closestCell := p.FindClosestCell(pacID, startIdx+1); closestCell != nil {
-					closestCells[pacID] = closestCell
-					debug(pacID, " is changing closest cell (conflict with", otherPacID, ") to >", closestCell)
-				} else {
-					debug("failed to find closest cell during check single >", pacID, startIdx+1)
-					closestCells[pacID] = nil
-					return closestCells
-				}
-				return p.CheckSingleClosestCells(closestCells, startIdx+1)
-			} else {
-				debug(pacID, "equal", otherPacID)
-				c1 := p.FindClosestCell(pacID, startIdx+1)
-				c2 := p.FindClosestCell(otherPacID, startIdx+1)
-				if c1 != nil && c2 != nil {
-					if c1.Dist < c2.Dist {
-						closestCells[pacID] = c1
-					} else {
-						closestCells[otherPacID] = c2
-					}
-					return p.CheckSingleClosestCells(closestCells, startIdx+1)
-				} else {
-					closestCells[pacID] = nil
-					closestCells[otherPacID] = nil
-				}
-			}
 
+			} else {
+				i++
+			}
+		}
+		closestCells[pacID] = cell
+	}
+
+	for pacID, cell := range closestCells {
+		for otherPacID, otherCell := range closestCells {
+			if pacID != otherPacID && cell != nil && cell.Equals(otherCell) {
+				if startIdx > 10 {
+					closestCells[pacID] = nil
+					break
+				} else {
+					return p.CheckSingleClosestCells(closestCells, startIdx+1)
+				}
+
+			}
 		}
 	}
+
 	return closestCells
 }
 
@@ -408,9 +380,6 @@ func (p *PacsManager) GetCellToAvoid(pac *Pac) *Cell {
 }
 
 func (p *PacsManager) HasEnemyInSight(pac *Pac) bool {
-	if pac.ID == 4 {
-		debug(pac.Sight, p.Enemies)
-	}
 	for _, cell := range pac.Sight {
 		for _, enemy := range p.Enemies {
 			if cell.X == enemy.X && cell.Y == enemy.Y {
@@ -491,7 +460,7 @@ func (p *Pac) Move(x, y int) string {
 }
 
 func (p *Pac) AskForSpeed() (string, bool) {
-	debug("AskForSpeed", p.ID, p.AbilityCooldown)
+	//debug("AskForSpeed", p.ID, p.AbilityCooldown)
 	if p.AbilityCooldown == 0 {
 		return fmt.Sprintf("SPEED %v", p.ID), true
 	}
@@ -509,18 +478,19 @@ func (p *Pac) AskForMorph(newType string) (string, bool) {
 func (p *Pac) CheckEnemies(pacManager *PacsManager) (string, bool) {
 	for enemy, cell := range pacManager.EnemiesInSight[p.ID] {
 		var distTrigger float64 = 3
-		if enemy.SpeedTurnsLeft > 0 {
-			distTrigger = 1
-		}
+		//if enemy.SpeedTurnsLeft > 0 && p.SpeedTurnsLeft == 0{
+		//	distTrigger = 1
+		//}
 		// Skip this enemy if its been a while since we saw him
 		if _, idx := p.Sight.Contains(&Cell{X: enemy.X, Y: enemy.Y}); idx == -1 && (p.ActiveRoundsCount-enemy.ActiveRoundsCount) > 2 {
 			debug(p.ID, "ignore check enemy", enemy, cell)
 			continue
-		} else if idx != 1 && p.ActiveRoundsCount != enemy.ActiveRoundsCount {
+		} else if idx != -1 && p.ActiveRoundsCount != enemy.ActiveRoundsCount {
 			debug(p.ID, "ignore check enemy is in sight but its not", p.Sight, idx, enemy, cell)
 			continue
 		}
 		if cell.Dist > distTrigger {
+			debug(p.ID, "ignore, too far", cell.Dist, distTrigger)
 			continue
 		}
 		if cell.Trend < 0 && cell.Value < 0 {
@@ -541,27 +511,28 @@ func (p *Pac) CheckEnemies(pacManager *PacsManager) (string, bool) {
 		} else if cell.Trend < 0 && cell.Value > 0 {
 			// Go for it. You can eat him
 			debug(p.ID, "go for it", enemy, cell)
-			if s := p.AvoidCell(enemy.X, enemy.Y); enemy.AbilityCooldown <= 1 && len(s) > 0 {
+			if enemy.AbilityCooldown >= 3 && enemy.SpeedTurnsLeft == 0 {
+				debug("chasing food", enemy.AbilityCooldown)
+				return p.Move(enemy.X, enemy.Y), true
+			} else if s := p.AvoidCell(enemy.X, enemy.Y); enemy.AbilityCooldown <= 1 && len(s) > 0 {
+				debug("stop chasing food", enemy.AbilityCooldown)
 				return s, true
 			}
-			// FIXME
-			//if s, ok := p.AskForSpeed(); ok && cell.Dist <= 2 {
-			//	return s, ok
-			//}
-			// TODO: Try: if dist <=1 Move to it
-			//return p.Move(enemy.X, enemy.Y), true
 		} else if cell.Trend < 0 && cell.Value == 0 {
 			// Cannot hurt me because we are in the same type
 			debug(p.ID, "cannot hurt", enemy, cell)
-			if s, ok := p.AskForMorph(weakSpot(enemy.Type)); ok {
+			if s, ok := p.AskForMorph(weakSpot(enemy.Type)); ok && enemy.AbilityCooldown > 2 {
 				return s, ok
 			} else {
 				debug(p.ID, "failed to morph in safe situation", ok, enemy, cell)
+				if s := p.AvoidCell(enemy.X, enemy.Y); enemy.AbilityCooldown <= 1 && len(s) > 0 {
+					return s, true
+				}
 			}
 		} else if cell.Trend > 0 && cell.Value < 0 {
 			// A danger is leaving
 			debug(p.ID, "danger leaving", enemy, cell)
-			if s := p.AvoidCell(enemy.X, enemy.Y); enemy.AbilityCooldown <= p.AbilityCooldown && len(s) > 0 {
+			if s := p.AvoidCell(enemy.X, enemy.Y); enemy.AbilityCooldown != 0 && len(s) > 0 {
 				return s, true
 			}
 		} else if cell.Trend > 0 && cell.Value > 0 {
@@ -593,16 +564,23 @@ func (p *Pac) CheckEnemies(pacManager *PacsManager) (string, bool) {
 		} else if cell.Trend == 0 && cell.Value > 0 {
 			// I'm following an enemy I can eat. Maybe chase him
 			debug(p.ID, "following food", enemy, cell)
-			if enemy.AbilityCooldown != 0 {
+			if enemy.AbilityCooldown >= 3 {
+				debug("chasing food", enemy.AbilityCooldown)
 				return p.Move(enemy.X, enemy.Y), true
+			} else if s := p.AvoidCell(enemy.X, enemy.Y); enemy.AbilityCooldown <= 1 && len(s) > 0 {
+				debug("stop chasing food", enemy.AbilityCooldown)
+				return s, true
 			}
 		} else if cell.Trend == 0 && cell.Value == 0 {
 			// I'm following an enemy that does matter. Ignore him
 			debug(p.ID, "following swiss", enemy, cell)
-			if s, ok := p.AskForMorph(weakSpot(enemy.Type)); ok {
+			if s, ok := p.AskForMorph(weakSpot(enemy.Type)); ok && enemy.AbilityCooldown > 2 {
 				return s, ok
 			} else {
 				debug(p.ID, "failed to morph in neutral situation", ok, enemy, cell)
+				if s := p.AvoidCell(enemy.X, enemy.Y); enemy.AbilityCooldown <= 1 && len(s) > 0 {
+					return s, true
+				}
 			}
 		} else {
 			debug(p.ID, "is in an unkown situation face to", enemy, cell)
