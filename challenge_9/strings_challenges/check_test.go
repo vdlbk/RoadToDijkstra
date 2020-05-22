@@ -160,3 +160,43 @@ func TestIsPalindrome(t *testing.T) {
 		})
 	}
 }
+
+func TestMyAtoi(t *testing.T) {
+	testCases := []struct {
+		input          string
+		expectedOutput int
+	}{
+		{"42", 42},
+		{"   -42", -42},
+		{"-42", -42},
+		{"--3", -0},
+		{"42-", 42},
+		{"- 42", 0},
+		{"+3", 3},
+		{"++3", 0},
+		{"+-3", 0},
+		{"4193 with words", 4193},
+		{" -4193 with words", -4193},
+		{"words and 987", 0},
+		{"-91283472332", -2147483648},
+		{"", 0},
+		{"900001283472332", 2147483647},
+		{"2147483648", 2147483647},
+		{"-2147483648", -2147483648},
+		{"0-1", 0},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := myAtoi(testCase.input)
+
+			if output != testCase.expectedOutput {
+				t.Errorf("[%d] Output was incorrect, myAtoi(%v) = %v, want: %v.", i,
+					testCase.input,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
