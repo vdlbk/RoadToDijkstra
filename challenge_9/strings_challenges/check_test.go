@@ -200,3 +200,38 @@ func TestMyAtoi(t *testing.T) {
 		})
 	}
 }
+
+func TestStrStr(t *testing.T) {
+	testCases := []struct {
+		input          string
+		needle         string
+		expectedOutput int
+	}{
+		{"hello", "ll", 2},
+		{"     hello", "ll", 7},
+		{"     hello", "lz", -1},
+		{"aaaaa", "bba", -1},
+		{"aaaaa", "aa", 0},
+		{"a", "aa", -1},
+		{"a", "", 0},
+		{"foo", "bar", -1},
+		{"foo", "foo", 0},
+		{"", "", 0},
+		{"", "z", -1},
+		{"mississippi", "issipi", -1},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := strStr(testCase.input, testCase.needle)
+
+			if output != testCase.expectedOutput {
+				t.Errorf("[%d] Output was incorrect, strStr(%v) = %v, want: %v.", i,
+					testCase.input,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}

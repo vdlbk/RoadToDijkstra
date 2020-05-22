@@ -62,3 +62,34 @@ func BenchmarkIsAnagram(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkStrStr(b *testing.B) {
+	benchmarks := []struct {
+		s string
+		t string
+	}{
+		{"", ""},
+		{"foo", "oo"},
+		{"foobar", "bar"},
+		{"anagram", "gr"},
+		{"abcdefghijklmnopqrstuvwxyz", "mno"},
+		{"abcdefghijklmnopqrstuvwxyz", ""},
+		{"abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz0"},
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("strStr %v", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				strStr(benchmark.s, benchmark.t)
+			}
+		})
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("strStrOpti %v", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				strStrOpti(benchmark.s, benchmark.t)
+			}
+		})
+	}
+}
