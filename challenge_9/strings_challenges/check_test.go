@@ -267,3 +267,35 @@ func TestCountAndSay(t *testing.T) {
 		})
 	}
 }
+
+func TestLongestCommonPrefix(t *testing.T) {
+	testCases := []struct {
+		input          []string
+		expectedOutput string
+	}{
+		{[]string{"flower", "flow", "flight"}, "fl"},
+		{[]string{"@d", "@q", "@s"}, "@"},
+		{[]string{"tower", "flow", "flight"}, ""},
+		{[]string{"dog", "racecar", "car"}, ""},
+		{[]string{"car", "car", "car"}, "car"},
+		{[]string{"foo"}, "foo"},
+		{[]string{"bar", "foobar"}, ""},
+		{[]string{"bar", "barfoo"}, "bar"},
+		{[]string{" ", " f"}, " "},
+		{[]string{"", "", "", "", ""}, ""},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := longestCommonPrefix(testCase.input)
+
+			if output != testCase.expectedOutput {
+				t.Errorf("[%d] Output was incorrect, longestCommonPrefix(%v) = %v, want: %v.", i,
+					testCase.input,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
