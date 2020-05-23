@@ -93,3 +93,37 @@ func BenchmarkStrStr(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkCountAndSay(b *testing.B) {
+	benchmarks := []struct {
+		x int
+	}{
+		{0},
+		{1},
+		{2},
+		{3},
+		{4},
+		{5},
+		{8},
+		{10},
+		{13},
+		{21},
+		{30},
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("countAndSay %v", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				countAndSay(benchmark.x)
+			}
+		})
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("countAndSayOpti %v", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				countAndSayOpti(benchmark.x)
+			}
+		})
+	}
+}
