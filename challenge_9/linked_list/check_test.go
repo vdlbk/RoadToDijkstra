@@ -66,3 +66,34 @@ func TestRemoveNthFromEnd(t *testing.T) {
 		})
 	}
 }
+
+func TestReverseList(t *testing.T) {
+	testCases := []struct {
+		input          *ListNode
+		expectedOutput *ListNode
+	}{
+		{GenerateListFromSlice([]int{1, 2, 3, 4, 5}), GenerateListFromSlice([]int{5, 4, 3, 2, 1})},
+		{GenerateListFromSlice([]int{1, 2, 3, 4}), GenerateListFromSlice([]int{4, 3, 2, 1})},
+		{GenerateListFromSlice([]int{1, 2, 3}), GenerateListFromSlice([]int{3, 2, 1})},
+		{GenerateListFromSlice([]int{1}), GenerateListFromSlice([]int{1})},
+		{GenerateListFromSlice([]int{1, 1}), GenerateListFromSlice([]int{1, 1})},
+		{GenerateListFromSlice([]int{1, 2}), GenerateListFromSlice([]int{2, 1})},
+		{GenerateListFromSlice([]int{}), GenerateListFromSlice([]int{})},
+		{GenerateListFromSlice([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
+			GenerateListFromSlice([]int{10, 9, 8, 7, 6, 5, 4, 3, 2, 1})},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := reverseList(testCase.input)
+
+			if !reflect.DeepEqual(output, testCase.expectedOutput) {
+				t.Errorf("[%d] Output was incorrect, reverseList(%v) = %v, want: %v.", i,
+					testCase.input,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}

@@ -50,3 +50,29 @@ func BenchmarkRemoveNthFromEnd(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkReverseList(b *testing.B) {
+	benchmarks := []struct {
+		input *ListNode
+	}{
+		{GenerateListFromSlice([]int{1, 2, 3, 4, 5})},
+		{GenerateListFromSlice([]int{1, 2, 3, 4})},
+		{GenerateListFromSlice([]int{1, 2})},
+		{GenerateListFromSlice([]int{})},
+		{GenerateListFromSlice([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18, 19, 20, 21})},
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("reverseList %v", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				reverseList(benchmark.input)
+			}
+		})
+
+		b.Run(fmt.Sprintf("reverseListRecursive %v", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				reverseListRecursive(benchmark.input)
+			}
+		})
+	}
+}
