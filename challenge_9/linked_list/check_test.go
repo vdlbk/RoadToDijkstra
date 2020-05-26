@@ -97,3 +97,77 @@ func TestReverseList(t *testing.T) {
 		})
 	}
 }
+
+func TestMergeTwoLists(t *testing.T) {
+	testCases := []struct {
+		input          *ListNode
+		input2         *ListNode
+		expectedOutput *ListNode
+	}{
+		{
+			GenerateListFromSlice([]int{1, 2, 4}),
+			GenerateListFromSlice([]int{1, 3, 4}),
+			GenerateListFromSlice([]int{1, 1, 2, 3, 4, 4}),
+		},
+		{
+			GenerateListFromSlice([]int{1}),
+			GenerateListFromSlice([]int{0}),
+			GenerateListFromSlice([]int{0, 1}),
+		},
+		{
+			GenerateListFromSlice([]int{0}),
+			GenerateListFromSlice([]int{1}),
+			GenerateListFromSlice([]int{0, 1}),
+		},
+		{
+			GenerateListFromSlice([]int{1, 2, 3}),
+			GenerateListFromSlice([]int{4, 5, 6}),
+			GenerateListFromSlice([]int{1, 2, 3, 4, 5, 6}),
+		},
+		{
+			GenerateListFromSlice([]int{6, 10, 43}),
+			GenerateListFromSlice([]int{1, 2}),
+			GenerateListFromSlice([]int{1, 2, 6, 10, 43}),
+		},
+		{
+			GenerateListFromSlice([]int{6, 10, 43}),
+			GenerateListFromSlice([]int{1, 2, 69, 121}),
+			GenerateListFromSlice([]int{1, 2, 6, 10, 43, 69, 121}),
+		},
+		{
+			GenerateListFromSlice([]int{}),
+			GenerateListFromSlice([]int{}),
+			GenerateListFromSlice([]int{}),
+		},
+		{
+			GenerateListFromSlice([]int{7}),
+			GenerateListFromSlice([]int{}),
+			GenerateListFromSlice([]int{7}),
+		},
+		{
+			GenerateListFromSlice([]int{}),
+			GenerateListFromSlice([]int{8}),
+			GenerateListFromSlice([]int{8}),
+		},
+		{
+			GenerateListFromSlice([]int{4, 2, 1}),
+			GenerateListFromSlice([]int{1, 3, 4}),
+			GenerateListFromSlice([]int{1, 3, 4, 4, 2, 1}),
+		},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := mergeTwoLists(testCase.input, testCase.input2)
+
+			if !reflect.DeepEqual(output, testCase.expectedOutput) {
+				t.Errorf("[%d] Output was incorrect, mergeTwoLists(%v, %v) = %v, want: %v.", i,
+					testCase.input,
+					testCase.input2,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
