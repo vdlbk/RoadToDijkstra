@@ -79,13 +79,14 @@ func TestReverseList(t *testing.T) {
 		{GenerateListFromSlice([]int{1, 1}), GenerateListFromSlice([]int{1, 1})},
 		{GenerateListFromSlice([]int{1, 2}), GenerateListFromSlice([]int{2, 1})},
 		{GenerateListFromSlice([]int{}), GenerateListFromSlice([]int{})},
+		{GenerateListFromSlice([]int{1, 2, 4, 2, 1}), GenerateListFromSlice([]int{1, 2, 4, 2, 1})},
 		{GenerateListFromSlice([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
 			GenerateListFromSlice([]int{10, 9, 8, 7, 6, 5, 4, 3, 2, 1})},
 	}
 
 	for i, testCase := range testCases {
 		t.Run("", func(t *testing.T) {
-			output := reverseList(testCase.input)
+			output := reverseListRecursive(testCase.input)
 
 			if !reflect.DeepEqual(output, testCase.expectedOutput) {
 				t.Errorf("[%d] Output was incorrect, reverseList(%v) = %v, want: %v.", i,
@@ -164,6 +165,39 @@ func TestMergeTwoLists(t *testing.T) {
 				t.Errorf("[%d] Output was incorrect, mergeTwoLists(%v, %v) = %v, want: %v.", i,
 					testCase.input,
 					testCase.input2,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
+
+func TestIsPalindrome(t *testing.T) {
+	testCases := []struct {
+		input          *ListNode
+		expectedOutput bool
+	}{
+		{GenerateListFromSlice([]int{1, 2, 4, 2, 1}), true},
+		{GenerateListFromSlice([]int{3, 9, 35, 9, 3}), true},
+		{GenerateListFromSlice([]int{1, 2, 2, 1}), true},
+		{GenerateListFromSlice([]int{28, 75, 90, 90, 75, 28}), true},
+		{GenerateListFromSlice([]int{1}), true},
+		{GenerateListFromSlice([]int{}), true},
+		{GenerateListFromSlice([]int{1, 2}), false},
+		{GenerateListFromSlice([]int{1, 2, 3}), false},
+		{GenerateListFromSlice([]int{1, 3, 0, 2}), false},
+		{GenerateListFromSlice([]int{5, 24, 5, 24, 5, 24, 5, 24, 5}), true},
+		{GenerateListFromSlice([]int{5, 24, 5, 24, 5, 24, 5, 24, 5, 24}), false},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := isPalindrome(testCase.input)
+
+			if !reflect.DeepEqual(output, testCase.expectedOutput) {
+				t.Errorf("[%d] Output was incorrect, isPalindrome(%v) = %v, want: %v.", i,
+					testCase.input,
 					output,
 					testCase.expectedOutput,
 				)

@@ -76,3 +76,27 @@ func BenchmarkReverseList(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkIsPalindrome(b *testing.B) {
+	benchmarks := []struct {
+		input *ListNode
+	}{
+		{GenerateListFromSlice([]int{1, 2, 3, 2, 1})},
+		{GenerateListFromSlice([]int{20, 43, 2, 79, 2, 43, 20})},
+		{GenerateListFromSlice([]int{1, 2, 3, 4, 5, 5, 4, 3, 2, 1})},
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("isPalindrome %v", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				isPalindrome(benchmark.input)
+			}
+		})
+
+		b.Run(fmt.Sprintf("isPalindromeOpti %v", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				isPalindromeOpti(benchmark.input)
+			}
+		})
+	}
+}
