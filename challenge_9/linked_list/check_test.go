@@ -205,3 +205,35 @@ func TestIsPalindrome(t *testing.T) {
 		})
 	}
 }
+
+func TestHasCycle(t *testing.T) {
+	testCases := []struct {
+		input          *ListNode
+		expectedOutput bool
+	}{
+		{GenerateListFromSliceWithCycle([]int{3, 2, 0, -4}, 0), true},
+		{GenerateListFromSliceWithCycle([]int{3, 2, 0, -4}, 1), true},
+		{GenerateListFromSliceWithCycle([]int{3, 2, 0, -4}, 2), true},
+		{GenerateListFromSliceWithCycle([]int{3, 2, 0, -4}, 3), true},
+		//{GenerateListFromSliceWithCycle([]int{3, 2, 0, -4}, -2), true},
+		{GenerateListFromSliceWithCycle([]int{1, 2}, 0), true},
+		{GenerateListFromSliceWithCycle([]int{1, 2}, 1), true},
+		//{GenerateListFromSliceWithCycle([]int{1, 2}, 2), true},
+		{GenerateListFromSliceWithCycle([]int{1}, -1), false},
+		{GenerateListFromSliceWithCycle([]int{3, 2, 0, -4, 2, 0, -4, 2, 0, -4, 2, 0, -4, 2, 0, -4, 2, 0, -4, 2, 0, -4}, -1), false},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := hasCycle(testCase.input)
+
+			if !reflect.DeepEqual(output, testCase.expectedOutput) {
+				t.Errorf("[%d] Output was incorrect, hasCycle(%v) = %v, want: %v.", i,
+					testCase.input,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}

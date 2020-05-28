@@ -100,3 +100,34 @@ func BenchmarkIsPalindrome(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkHasCycle(b *testing.B) {
+	benchmarks := []struct {
+		input *ListNode
+	}{
+		{GenerateListFromSliceWithCycle([]int{3, 2, 0, -4}, 0)},
+		{GenerateListFromSliceWithCycle([]int{3, 2, 0, -4}, 1)},
+		{GenerateListFromSliceWithCycle([]int{3, 2, 0, -4}, 2)},
+		{GenerateListFromSliceWithCycle([]int{3, 2, 0, -4}, 3)},
+		//{GenerateListFromSliceWithCycle([]int{3, 2, 0, -4}, -2)},
+		{GenerateListFromSliceWithCycle([]int{1, 2}, 0)},
+		{GenerateListFromSliceWithCycle([]int{1, 2}, 1)},
+		//{GenerateListFromSliceWithCycle([]int{1, 2}, 2)},
+		{GenerateListFromSliceWithCycle([]int{1}, -1)},
+		{GenerateListFromSliceWithCycle([]int{3, 2, 0, -4, 2, 0, -4, 2, 0, -4, 2, 0, -4, 2, 0, -4, 2, 0, -4, 2, 0, -4}, -1)},
+	}
+
+	for i, benchmark := range benchmarks {
+		b.Run(fmt.Sprintf("hasCycle %v", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				hasCycle(benchmark.input)
+			}
+		})
+
+		b.Run(fmt.Sprintf("hasCycleOpti %v", i), func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				hasCycleOpti(benchmark.input)
+			}
+		})
+	}
+}
