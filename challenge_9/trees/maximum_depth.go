@@ -19,3 +19,18 @@ func maxDepth(root *TreeNode) int {
 
 	return depth
 }
+
+// Best answer on leetcode but benchmarks show small differences
+func maxDepthOpti(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	return 1 + Max(maxDepth(root.Right), maxDepth(root.Left))
+}
+
+func Max(x, y int) int {
+	if x < y {
+		return y
+	}
+	return x
+}
