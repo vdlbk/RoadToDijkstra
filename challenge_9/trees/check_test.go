@@ -31,3 +31,39 @@ func TestMaxDepth(t *testing.T) {
 		})
 	}
 }
+
+func TestIsValidBST(t *testing.T) {
+	testCases := []struct {
+		input          *TreeNode
+		expectedOutput bool
+	}{
+		{GenerateTreeNode([]int{}), true},
+		{GenerateTreeNode([]int{1}), true},
+		{GenerateTreeNode([]int{2, 1, 3}), true},
+		{GenerateTreeNode([]int{0, -1, 1}), true},
+		{GenerateTreeNode([]int{10, 5, 15, 2, 7, 12, 17}), true},
+		{GenerateTreeNode([]int{8, 4, 12, null, 6, null, 14}), true},
+		{GenerateTreeNode([]int{8, 4, 12, 2, null, 10, null}), true},
+		{GenerateTreeNode([]int{10, 5, 15, 2, 7, 12, 17, 1, 3, 6, 8, 11, 14, 16, 21}), true},
+		{GenerateTreeNode([]int{10, 5, 15, 2, 7, 12, 17, 1, 3, 6, 8, 11, 14, 36, 21}), false},
+		{GenerateTreeNode([]int{10, 8, 9, 7, 11}), false},
+		{GenerateTreeNode([]int{5, 1, 4, null, null, 3, 6}), false},
+		{GenerateTreeNode([]int{10, 5, 15, null, null, 6, 20}), false},
+		{GenerateTreeNode([]int{0, 0, 0}), false},
+		{GenerateTreeNode([]int{1, 0, 1}), false},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := isValidBST(testCase.input)
+
+			if output != testCase.expectedOutput {
+				t.Errorf("[%d] Output was incorrect, isValidBST(%v) = %v, want: %v.", i,
+					testCase.input,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
