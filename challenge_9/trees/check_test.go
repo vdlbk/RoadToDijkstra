@@ -67,3 +67,36 @@ func TestIsValidBST(t *testing.T) {
 		})
 	}
 }
+
+func TestIsSymmetric(t *testing.T) {
+	testCases := []struct {
+		input          *TreeNode
+		expectedOutput bool
+	}{
+		{GenerateTreeNode([]int{}), true},
+		{GenerateTreeNode([]int{1}), true},
+		{GenerateTreeNode([]int{1, 2, 2}), true},
+		{GenerateTreeNode([]int{1, 2, 2, 3, 4, 4, 3}), true},
+		{GenerateTreeNode([]int{0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3}), true},
+		{GenerateTreeNode([]int{0, 1, 1, 2, 18, 18, 2, null, 3, 4, 5, 5, 4, 3, null}), true},
+		{GenerateTreeNode([]int{0, 1, 1, 2, 18, 18, 2, 3, null, 4, 5, 5, 4, null, 3}), true},
+		{GenerateTreeNode([]int{1, 2, null}), false},
+		{GenerateTreeNode([]int{1, null, 2}), false},
+		{GenerateTreeNode([]int{1, 2, 3}), false},
+		{GenerateTreeNode([]int{1, 2, 2, null, 3, null, 3}), false},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := isSymmetric(testCase.input)
+
+			if output != testCase.expectedOutput {
+				t.Errorf("[%d] Output was incorrect, isSymmetric(%v) = %v, want: %v.", i,
+					testCase.input,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
