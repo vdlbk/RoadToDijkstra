@@ -1,6 +1,7 @@
 package trees
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -92,6 +93,35 @@ func TestIsSymmetric(t *testing.T) {
 
 			if output != testCase.expectedOutput {
 				t.Errorf("[%d] Output was incorrect, isSymmetric(%v) = %v, want: %v.", i,
+					testCase.input,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
+
+func TestLevelOrder(t *testing.T) {
+	testCases := []struct {
+		input          *TreeNode
+		expectedOutput [][]int
+	}{
+		{GenerateTreeNode([]int{}), [][]int{}},
+		{GenerateTreeNode([]int{1}), [][]int{{1}}},
+		{GenerateTreeNode([]int{1, 2, 3}), [][]int{{1}, {2, 3}}},
+		{GenerateTreeNode([]int{3, 9, null}), [][]int{{3}, {9}}},
+		{GenerateTreeNode([]int{3, 9, 20, null, null, 15, 7}), [][]int{{3}, {9, 20}, {15, 7}}},
+		{GenerateTreeNode([]int{0, 1, 1, 2, 18, 18, 2, null, 3, 4, 5, 5, 4, 3, null}),
+			[][]int{{0}, {1, 1}, {2, 18, 18, 2}, {3, 4, 5, 5, 4, 3}}},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := levelOrder(testCase.input)
+
+			if !reflect.DeepEqual(output, testCase.expectedOutput) {
+				t.Errorf("[%d] Output was incorrect, levelOrder(%v) = %v, want: %v.", i,
 					testCase.input,
 					output,
 					testCase.expectedOutput,
