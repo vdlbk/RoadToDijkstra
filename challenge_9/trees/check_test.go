@@ -130,3 +130,30 @@ func TestLevelOrder(t *testing.T) {
 		})
 	}
 }
+
+func TestSortedArrayToBST(t *testing.T) {
+	testCases := []struct {
+		input          []int
+		expectedOutput *TreeNode
+	}{
+		{[]int{}, nil},
+		{[]int{1}, GenerateTreeNode([]int{1})},
+		{[]int{1, 2, 3}, GenerateTreeNode([]int{2, 1, 3})},
+		{[]int{-2, -1, 1, 2}, GenerateTreeNode([]int{1, -1, 2, -2})},
+		{[]int{-10, -3, 0, 5, 9}, GenerateTreeNode([]int{0, -3, 9, -10, null, 5})},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			output := sortedArrayToBST(testCase.input)
+
+			if !reflect.DeepEqual(output, testCase.expectedOutput) {
+				t.Errorf("[%d] Output was incorrect, sortedArrayToBST(%v) = %v, want: %v.", i,
+					testCase.input,
+					output,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}

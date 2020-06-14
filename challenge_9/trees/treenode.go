@@ -11,7 +11,7 @@ type TreeNode struct {
 }
 
 func (t TreeNode) String() string {
-	return fmt.Sprintf("Val: %v, Left: %+v, Right: %+v", t.Val, t.Left, t.Right)
+	return fmt.Sprintf("Val: %v\n\tLeft: %+v, \n\tRight: %+v", t.Val, t.Left, t.Right)
 }
 
 func Insert(ints []int, root *TreeNode, i int) *TreeNode {

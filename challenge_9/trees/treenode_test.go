@@ -13,6 +13,7 @@ func TestGenerateTreeNode(t *testing.T) {
 	}{
 		{[]int{}, nil},
 		{[]int{2, 1, 3}, &TreeNode{Val: 2, Left: &TreeNode{Val: 1}, Right: &TreeNode{Val: 3}}},
+		{[]int{1, 2, 3}, &TreeNode{Val: 1, Left: &TreeNode{Val: 2}, Right: &TreeNode{Val: 3}}},
 		{[]int{3, 9, 20, null, null, 15, 7},
 			&TreeNode{Val: 3,
 				Left: &TreeNode{Val: 9},
