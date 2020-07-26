@@ -31,3 +31,32 @@ func TestFizzBuzz(t *testing.T) {
 		})
 	}
 }
+
+func TestCountPrimes(t *testing.T) {
+	testCases := []struct {
+		input          int
+		expectedOutput int
+	}{
+		{0, 0},
+		{1, 0},
+		{2, 1},
+		{3, 2},
+		{4, 2},
+		{5, 3},
+		{10, 4},
+	}
+
+	for i, testCase := range testCases {
+		t.Run("", func(t *testing.T) {
+			result := countPrimes(testCase.input)
+
+			if result != testCase.expectedOutput {
+				t.Errorf("[%d] Output was incorrect, countPrimes(%v)= %v, want: %v.", i,
+					testCase.input,
+					result,
+					testCase.expectedOutput,
+				)
+			}
+		})
+	}
+}
